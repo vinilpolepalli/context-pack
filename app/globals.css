@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+body { background: #fafafa; color: #18181b; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+.num { font-variant-numeric: tabular-nums; }
+.label { font-variant: small-caps; letter-spacing: 0.06em; text-transform: lowercase; font-size: 0.8rem; color: #71717a; font-weight: 600; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid #0e7490; outline-offset: 2px; }

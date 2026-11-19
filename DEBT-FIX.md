@@ -1,0 +1,11 @@
+# Data-label correction + second-company verification
+
+Review found a correctness bug: the pack extracts LongTermDebt but labels it "Total debt" (metric name, JSON key, chart/Q&A copy). Long-term debt alone is not total debt. Fix it properly and carry the correction through every surface.
+
+1. METRIC SEMANTICS: replace the "Total debt" metric with an honest one:
+   - Compute "Total debt" ONLY when the components support it: LongTermDebt plus the current portion (LongTermDebtCurrent) plus ShortTermBorrowings when consistently tagged for all 12 quarters. List the component tags in provenance. If components are not consistently available, do NOT publish a partial total under that name - fall back to labeling the metric exactly what the tag says ("Long-term debt", us-gaap LongTermDebt) and keep the omission honest.
+   - Carry the chosen label/definition through: pack JSON keys (rename totalDebt appropriately, e.g. totalDebt only when the supported definition holds, else longTermDebt), library columns, charts, Q&A question/answer wording, provenance table, README and IMPLEMENTATION.md.
+2. Q&A: the debt-change question must name the metric it actually used and keep the existing "definitions differ across filers" caveat.
+3. SECOND-COMPANY VERIFICATION (different fiscal year than MSFT's July-June): run the live fetch for KO (calendar FY) and NVDA (Feb-Jan FY). Verify: (a) cumulative-difference quarter selection - Q4-style quarters derived from cumulative periods that share a fiscal-year start are flagged derivedQ4OrYtdDifference and the math is right (spot-check one derived quarter's revenue against EDGAR companyfacts by hand: annual minus the three filed 3-month quarters, or YTD differences); (b) restatement handling - when multiple facts exist for the same period, document which one the extractor picks (latest filed) and confirm that choice in code; (c) KO's debt metric - with the new semantics, KO should either show a supported total with components or the exact-tag label, and the omission list must explain whatever is not covered.
+4. Rebuild, re-scan (python3 ~/unslop/devibe_scan.py .), and update IMPLEMENTATION.md with the second-company verification results including the actual numbers checked.
+Do not deploy or push.
